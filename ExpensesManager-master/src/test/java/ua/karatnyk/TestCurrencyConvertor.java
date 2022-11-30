@@ -63,6 +63,67 @@ public class TestCurrencyConvertor {
     }
 
     @Test
+    public void testCurrencyConvertorSmallFrontierAmountCadUsd() {
+
+        String[] devises = { "CAD", "USD" };
+
+        Double amount = 0.000001;
+        double test;
+        try {
+            test = convert(amount, devises[0], devises[1], conversion);
+        } catch (Exception e) {
+            fail(e.toString());
+            return;
+        }
+        Double CAD = 1.377056;
+        Double USD = 1.024328;
+
+        // Error of 1 %
+        assertEquals(amount / CAD * USD, test, (amount + test) / (2 * 100));
+
+    }
+
+    @Test
+    public void testCurrencyConvertorBigFrontierAmountCadUsd() {
+
+        String[] devises = { "CAD", "USD" };
+
+        Double amount = 10000.0;
+        double test;
+        try {
+            test = convert(amount, devises[0], devises[1], conversion);
+        } catch (Exception e) {
+            fail(e.toString());
+            return;
+        }
+        Double CAD = 1.377056;
+        Double USD = 1.024328;
+
+        assertEquals(amount / CAD * USD, test, 0.01);
+
+    }
+
+    @Test
+    public void testCurrencyConvertorEqual0AmountCadUsd() {
+
+        String[] devises = { "CAD", "USD" };
+
+        Double amount = 0.0;
+        double test;
+        try {
+            test = convert(amount, devises[0], devises[1], conversion);
+        } catch (Exception e) {
+            fail(e.toString());
+            return;
+        }
+        Double CAD = 1.377056;
+        Double USD = 1.024328;
+
+        assertEquals(amount / CAD * USD, test, 0.01);
+
+    }
+
+    @Test
     public void testCurrencyConvertorBiggerAmountCadUsd() {
 
         String[] devises = { "CAD", "USD" };
@@ -79,24 +140,7 @@ public class TestCurrencyConvertor {
 
     }
 
-    // JPY CAD
-    @Test
-    public void testCurrencyConvertorSmallerAmountJpyCad() {
-
-        String[] devises = { "JPY", "CAD" };
-
-        Double amount = -5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
+    //Jpy Cad
     @Test
     public void testCurrencyConvertorGoodAmountJpyCad() {
 
@@ -114,41 +158,7 @@ public class TestCurrencyConvertor {
 
     }
 
-    @Test
-    public void testCurrencyConvertorBiggerAmountJpyCad() {
-
-        String[] devises = { "JPY", "CAD" };
-
-        Double amount = 50000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
-    // CAD JPY
-    @Test
-    public void testCurrencyConvertorSmallerAmountCadJpy() {
-
-        String[] devises = { "JPY", "CAD" };
-
-        Double amount = -5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
+    // Cad Jpy
     @Test
     public void testCurrencyConvertorGoodAmountCadJpy() {
 
@@ -166,41 +176,7 @@ public class TestCurrencyConvertor {
 
     }
 
-    @Test
-    public void testCurrencyConvertorBiggerAmountCadJpy() {
-
-        String[] devises = { "JPY", "CAD" };
-
-        Double amount = 50000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
-    // CAD JPY
-    @Test
-    public void testCurrencyConvertorSmallerAmountJpyBzd() {
-
-        String[] devises = { "JPY", "BZD" };
-
-        Double amount = -5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
+    // Jpy Bzd
     @Test
     public void testCurrencyConvertorGoodAmountJpyBzd() {
 
@@ -218,41 +194,7 @@ public class TestCurrencyConvertor {
 
     }
 
-    @Test
-    public void testCurrencyConvertorBiggerAmountJpyBzd() {
-
-        String[] devises = { "JPY", "BZD" };
-
-        Double amount = 50000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
-    // CAD JPY
-    @Test
-    public void testCurrencyConvertorSmallerAmountCadCad() {
-
-        String[] devises = { "CAD", "CAD" };
-
-        Double amount = -5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
+    // Cad Cad
     @Test
     public void testCurrencyConvertorGoodAmountCadCad() {
 
@@ -269,22 +211,3 @@ public class TestCurrencyConvertor {
         assertEquals(test, amount, 0.1);
 
     }
-
-    @Test
-    public void testCurrencyConvertorBiggerAmountCadCad() {
-
-        String[] devises = { "CAD", "CAD" };
-
-        Double amount = 50000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
-    }
-
-}

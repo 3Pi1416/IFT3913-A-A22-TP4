@@ -1,15 +1,12 @@
 package ua.karatnyk;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static ua.karatnyk.impl.CurrencyConvertor.convert;
 
 import java.text.ParseException;
 
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ua.karatnyk.impl.CurrencyConversion;
 import ua.karatnyk.impl.OfflineJsonWorker;
 
@@ -17,197 +14,148 @@ public class TestCurrencyConvertor {
 
     private CurrencyConversion conversion;
 
-    @Before
+    @BeforeEach
     public void before() {
         OfflineJsonWorker manager = new OfflineJsonWorker();
         conversion = manager.parser();
 
     }
 
-    // USD CAD
     @Test
-    public void testCurrencyConvertorSmallerAmountCadUsd() {
+    public void whenAmountIsNegative_thenThrowsException() throws ParseException{
+        String currency1 = "CAD";
+        String currency2 = "USD";
+        double amount = -500.0;
 
-        String[] devises = { "CAD", "USD" };
-
-        Double amount = -5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
+        convert(amount, currency1, currency2, conversion);
     }
 
     @Test
-    public void testCurrencyConvertorGoodAmountCadUsd() {
+    public void whenAmountIsSmallButNegative_thenThrowsException() {
+        String currency1 = "CAD";
+        String currency2 = "USD";
+        double amount = -0.01;
 
-        String[] devises = { "CAD", "USD" };
-
-        Double amount = 5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            fail(e.toString());
-            return;
-        }
-        Double CAD = 1.377056;
-        Double USD = 1.024328;
-
-        assertTrue(amount / CAD * USD == test);
-
+        assertThrows(IllegalArgumentException.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
     @Test
-    public void testCurrencyConvertorSmallFrontierAmountCadUsd() {
+    public void whenAmountIsZero_thenReturnsZero() throws ParseException{
+        String currency1 = "CAD";
+        String currency2 = "USD";
+        double amount = 0.0;
 
-        String[] devises = { "CAD", "USD" };
+        double convertedAmount = convert(amount, currency1, currency2, conversion);
 
-        Double amount = 0.000001;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            fail(e.toString());
-            return;
-        }
-        Double CAD = 1.377056;
-        Double USD = 1.024328;
+        assertEquals(amount, convertedAmount);
+    }
+
+    @Test
+    public void whenAmountIsVerySmall_thenConvertsWithinAcceptedError() throws ParseException{
+
+        String[] devises = {"CAD", "USD"};
+
+        double amount = 0.000001;
+        double convertedAmount = convert(amount, devises[0], devises[1], conversion);
+
+        double CAD = 1.377056;
+        double USD = 1.024328;
 
         // Error of 1 %
-        assertEquals(amount / CAD * USD, test, (amount + test) / (2 * 100));
+        assertEquals(amount / CAD * USD, convertedAmount, (amount + convertedAmount) / (2 * 100));
 
     }
 
     @Test
-    public void testCurrencyConvertorBigFrontierAmountCadUsd() {
+    public void whenAmountIsInEndOfRange_thenReturnsConversion() throws ParseException{
+        String currency1 = "CAD";
+        String currency2 = "USD";
+        double amount = 10000.0;
 
-        String[] devises = { "CAD", "USD" };
-
-        Double amount = 10000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            fail(e.toString());
-            return;
-        }
-        Double CAD = 1.377056;
-        Double USD = 1.024328;
-
-        assertEquals(amount / CAD * USD, test, 0.01);
-
+        convert(amount, currency1, currency2, conversion);
     }
 
     @Test
-    public void testCurrencyConvertorEqual0AmountCadUsd() {
+    public void whenAmountExceedsRange_thenThrowsException() {
+        String currency1 = "CAD";
+        String currency2 = "USD";
+        double amount = 10001.0;
 
-        String[] devises = { "CAD", "USD" };
-
-        Double amount = 0.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            fail(e.toString());
-            return;
-        }
-        Double CAD = 1.377056;
-        Double USD = 1.024328;
-
-        assertEquals(amount / CAD * USD, test, 0.01);
-
+        assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
     @Test
-    public void testCurrencyConvertorBiggerAmountCadUsd() {
+    public void whenAmountGreatlyExceeds10000_thenThrowsException() {
+        String currency1 = "CAD";
+        String currency2 = "USD";
+        double amount = 50000.0;
 
-        String[] devises = { "CAD", "USD" };
-
-        Double amount = 50000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
+        assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
-    //Jpy Cad
     @Test
-    public void testCurrencyConvertorGoodAmountJpyCad() {
+    public void whenConversionIsValid_thenReturnsCorrectConversion() throws ParseException{
 
-        String[] devises = { "JPY", "CAD" };
+        String[] devises = {"CAD", "USD"};
 
-        Double amount = 5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
+        double amount = 5000.0;
+        double convertedAmount = convert(amount, devises[0], devises[1], conversion);
+
+        double CAD = 1.377056;
+        double USD = 1.024328;
+
+        assertEquals(amount / CAD * USD, convertedAmount);
 
     }
 
-    // Cad Jpy
+    // JPY CAD
     @Test
-    public void testCurrencyConvertorGoodAmountCadJpy() {
+    public void whenGivenOneNonSupportedCurrencyFirst_thenThrowsException() {
+        String currency1 ="JPY";
+        String currency2 = "CAD";
+        double amount = 5000.0;
 
-        String[] devises = { "JPY", "CAD" };
-
-        Double amount = 5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
+        assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
-    // Jpy Bzd
+    // CAD JPY
     @Test
-    public void testCurrencyConvertorGoodAmountJpyBzd() {
+    public void whenGivenOneNonSupportedCurrencySecond_thenThrowsException() {
+        String currency1 = "CAD";
+        String currency2 = "JPY";
+        double amount = 5000.0;
 
-        String[] devises = { "JPY", "BZD" };
-
-        Double amount = 5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            assertTrue(true);
-            return;
-        }
-        fail(String.format("Should not have an valide number, got  %d", test));
-
+        assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
-    // Cad Cad
+    // JPY BZD
     @Test
-    public void testCurrencyConvertorGoodAmountCadCad() {
+    public void whenGivenTwoNonSupportedCurrencies_thenThrowsException() {
+        String currency1 = "JPY";
+        String currency2 = "BZD";
+        double amount = 5000.0;
 
-        String[] devises = { "CAD", "CAD" };
-
-        Double amount = 5000.0;
-        double test;
-        try {
-            test = convert(amount, devises[0], devises[1], conversion);
-        } catch (Exception e) {
-            fail(e.toString());
-            return;
-        }
-        assertEquals(test, amount, 0.1);
-
+        assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
     }
+
+    // CAD CAD
+    @Test
+    public void whenCurrenciesAreTheSame_thenReturnsSameAmount() throws ParseException{
+        String currency1 = "CAD";
+        String currency2 = "CAD";
+        double amount = 12.0;
+
+        double convertedAmount = convert(amount, currency1, currency2, conversion);
+
+        assertEquals(amount, convertedAmount);
+    }
+
+    @Test
+    public void whenGivenNonExistentCurrency_thenThrowsException() {
+        String currency1 = "USD";
+        String currency2 = "USA";
+        double amount = 12.0;
+
+        assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
+    }
+}

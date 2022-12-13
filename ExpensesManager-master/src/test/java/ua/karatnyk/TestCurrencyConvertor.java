@@ -21,25 +21,25 @@ public class TestCurrencyConvertor {
     }
 
     @Test
-    public void whenAmountIsNegative_thenThrowsException() throws ParseException{
+    public void whenAmountIsNegative_thenThrowsException() {
         String currency1 = "CAD";
         String currency2 = "USD";
-        double amount = -500.0;
+        double amount = -5000.0;
 
-        convert(amount, currency1, currency2, conversion);
+        assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
     @Test
     public void whenAmountIsSmallButNegative_thenThrowsException() {
         String currency1 = "CAD";
         String currency2 = "USD";
-        double amount = -0.01;
+        double amount = -0.000001;
 
         assertThrows(IllegalArgumentException.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
     @Test
-    public void whenAmountIsZero_thenReturnsZero() throws ParseException{
+    public void whenAmountIsZero_thenReturnsZero() throws Exception{
         String currency1 = "CAD";
         String currency2 = "USD";
         double amount = 0.0;
@@ -50,7 +50,7 @@ public class TestCurrencyConvertor {
     }
 
     @Test
-    public void whenAmountIsVerySmall_thenConvertsWithinAcceptedError() throws ParseException{
+    public void whenAmountIsSmall_thenConvertsWithinAcceptedError() throws Exception{
         String currency1 = "CAD";
         String currency2 = "USD";
 
@@ -65,7 +65,7 @@ public class TestCurrencyConvertor {
     }
 
     @Test
-    public void whenAmountIsInEndOfRange_thenReturnsConversion() throws ParseException{
+    public void whenAmountIsInEndOfRange_thenReturnsConversion() throws Exception{
         String currency1 = "CAD";
         String currency2 = "USD";
         double amount = 10000.0;
@@ -93,7 +93,7 @@ public class TestCurrencyConvertor {
 
     // test boite noire et blanche
     @Test
-    public void whenConversionIsValid_thenReturnsCorrectConversion() throws ParseException{
+    public void whenConversionIsValid_thenReturnsCorrectConversion() throws Exception{
         String currency1 = "CAD";
         String currency2 = "USD";
 
@@ -138,7 +138,7 @@ public class TestCurrencyConvertor {
 
     // CAD CAD
     @Test
-    public void whenCurrenciesAreTheSame_thenReturnsSameAmount() throws ParseException{
+    public void whenCurrenciesAreTheSame_thenReturnsSameAmount() throws Exception{
         String currency1 = "CAD";
         String currency2 = "CAD";
         double amount = 12.0;

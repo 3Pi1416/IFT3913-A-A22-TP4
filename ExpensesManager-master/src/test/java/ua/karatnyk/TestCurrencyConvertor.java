@@ -18,7 +18,6 @@ public class TestCurrencyConvertor {
     public void before() {
         OfflineJsonWorker manager = new OfflineJsonWorker();
         conversion = manager.parser();
-
     }
 
     @Test
@@ -52,18 +51,17 @@ public class TestCurrencyConvertor {
 
     @Test
     public void whenAmountIsVerySmall_thenConvertsWithinAcceptedError() throws ParseException{
-
-        String[] devises = {"CAD", "USD"};
+        String currency1 = "CAD";
+        String currency2 = "USD";
 
         double amount = 0.000001;
-        double convertedAmount = convert(amount, devises[0], devises[1], conversion);
+        double convertedAmount = convert(amount, currency1, currency2, conversion);
 
         double CAD = 1.377056;
         double USD = 1.024328;
 
         // Error of 1 %
         assertEquals(amount / CAD * USD, convertedAmount, (amount + convertedAmount) / (2 * 100));
-
     }
 
     @Test
@@ -93,19 +91,19 @@ public class TestCurrencyConvertor {
         assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
     }
 
+    // test boite noire et blanche
     @Test
     public void whenConversionIsValid_thenReturnsCorrectConversion() throws ParseException{
-
-        String[] devises = {"CAD", "USD"};
+        String currency1 = "CAD";
+        String currency2 = "USD";
 
         double amount = 5000.0;
-        double convertedAmount = convert(amount, devises[0], devises[1], conversion);
+        double convertedAmount = convert(amount, currency1, currency2, conversion);
 
         double CAD = 1.377056;
         double USD = 1.024328;
 
         assertEquals(amount / CAD * USD, convertedAmount);
-
     }
 
     // JPY CAD
@@ -157,5 +155,20 @@ public class TestCurrencyConvertor {
         double amount = 12.0;
 
         assertThrows(Exception.class, () -> convert(amount, currency1, currency2, conversion));
+    }
+
+    // test boite blanche
+    @Test
+    public void whenGivenNonExistentCurrency_thenThrowsCorrectException() {
+        String currency1 = "USD";
+        String currency2 = "USA";
+        double amount = 12.0;
+        String expectedMessage = "Not correct format currency";
+
+        ParseException exception = assertThrows(ParseException.class,
+                () -> convert(amount, currency1, currency2, conversion));
+
+        String message = exception.getMessage();
+        assertEquals(expectedMessage, message);
     }
 }
